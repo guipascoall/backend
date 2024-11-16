@@ -6,6 +6,9 @@ class UsuarioController {
         
         try{
             const usuario = await UsuarioModel.create(req.body);
+
+            const{senha, ...novoUsuario} = usuario.toObject()
+
             res.status(200).json(usuario);
         } catch (error){
             res.status(500).json({message: "Algo deu errado :(", error: error.message});
@@ -20,8 +23,6 @@ class UsuarioController {
         } catch (error) {
             res.status(500).json({message: "Algo deu errado :(", error: error.message});
         }
-        
-
     }
 
     async update(req, res){
