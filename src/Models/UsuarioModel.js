@@ -1,5 +1,6 @@
 const mongoose = require ("mongoose");
 const bcrypt = require("bcrypt");
+const SessoesModel = require("./SessoesModels");
 
 const Schema = mongoose.Schema;
 
@@ -26,11 +27,21 @@ UsuarioSchema.pre("save", async function(next){
         const salt = await bcrypt.genSalt();
         const hash = await bcrypt.hash(user.senha, salt);
         user.senha = hash;
-        console.log({salt,hash});
+        //console.log({salt,hash});
     }
 
     next()
 });
+
+UsuarioSchema.pre(
+    "deleteOne", 
+    {document: true, query: false},
+    async function(){
+        const usuario = this;
+
+        return SessoesModel.deleteOne({id_usuario: usuario._id});
+    }
+);
 
 const UsuarioModel = mongoose.model ('usuarios', UsuarioSchema);
 
